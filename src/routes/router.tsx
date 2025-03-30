@@ -1,6 +1,5 @@
 import { createBrowserRouter } from 'react-router'
 import { ROUTES } from '../constants'
-import MainLayout from '../layouts/MainLayout'
 import Home from '../pages/Home'
 import Login from '../pages/Login'
 import { loginAction } from './login'
@@ -11,14 +10,15 @@ import UserProfile from '../pages/UserProfile'
 import { signUpAction } from './signUp'
 import { userProfileAction, userProfileLoader } from './userProfile'
 import { updatePasswordAction } from './updatePassword'
+import RootLayout from '../layouts/RootLayout'
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <MainLayout />,
+    element: <RootLayout key={localStorage.getItem("username") || "guest"}/>,
     errorElement: <GlobalError />,
     children: [
-        { path: ROUTES.LOGIN, element: <Login />, action: loginAction },
+        { path: ROUTES.LOGIN, Component: Login, action: loginAction },
         { path: ROUTES.SIGN_UP, element: <SignUp />, action: signUpAction },
         { path: ROUTES.HOME, element: <Home />, loader: homeLoader },
         {

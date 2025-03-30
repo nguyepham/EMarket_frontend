@@ -1,7 +1,8 @@
 // src/api/authApi.ts
 
+import { ErrorResponse } from 'react-router'
 import { ENDPOINTS } from '../constants'
-import { LoginRequest, SignUpRequest, ErrorResponse } from '../types/api'
+import { LoginRequest, SignUpRequest } from '../types/api'
 
 export const login = async (credentials: LoginRequest): Promise<string> => {
   try {
@@ -15,22 +16,23 @@ export const login = async (credentials: LoginRequest): Promise<string> => {
 
     if (!res.ok) {
       const errorData = await res.json()
+      console.log('Error data from login:', errorData)
       throw {
-        message: errorData.message || 'Login failed',
-        httpStatus: res.status,
+        statusText: errorData.message || 'Login failed',
+        status: res.status,
       } as ErrorResponse
     }
 
     return await res.text()
     
   } catch (err: any) {
-    if (err.message && err.httpStatus) {
+    if (err.status && err.statusText) {
       // Already in ErrorResponse format
       throw err
     }
     throw {
-      message: 'Unable to connect to server.',
-      httpStatus: 0,
+      statusText: 'Unable to connect to server.',
+      status: 0,
     } as ErrorResponse
   }
 }
@@ -48,19 +50,19 @@ export const signUp = async (data: SignUpRequest): Promise<void> => {
     if (!res.ok) {
       const errorData = await res.json()
       throw {
-        message: errorData.message || 'Sign-up failed',
-        httpStatus: res.status,
+        statusText: errorData.message || 'Sign-up failed',
+        status: res.status,
       } as ErrorResponse
     }
 
     // success: nothing to return
   } catch (err: any) {
-    if (err.message && err.httpStatus) {
+    if (err.status && err.statusText) {
       throw err
     }
     throw {
-      message: 'Unable to connect to server.',
-      httpStatus: 0,
+      statusText: 'Unable to connect to server.',
+      status: 0,
     } as ErrorResponse
   }
 }

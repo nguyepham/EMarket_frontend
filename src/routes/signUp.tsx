@@ -62,9 +62,9 @@ export async function signUpAction({ request }: ActionFunctionArgs) {
     return redirect(ROUTES.LOGIN)
   } catch (err: any) {
     return new Response(
-      JSON.stringify({ errors: [{ field: 'server', message: err.message }] }), 
+      JSON.stringify({ errors: [{ field: 'server', message: err.statusText }] }), 
       { 
-        status: err.httpStatus || 500, 
+        status: err.status || 500, 
         headers: { 'Content-Type': 'application/json' } 
       }
     )

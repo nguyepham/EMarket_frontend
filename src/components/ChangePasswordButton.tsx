@@ -1,21 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChangePasswordModal from "./ChangePasswordModal";
+import { Button } from "evergreen-ui";
+import UpdatePasswordModal from "./ChangePasswordModal";
 
 const ChangePasswordButton = ({ username }: { username: string }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  useEffect(() => {
+    console.log("isModalOpen changed:", isModalOpen);
+  }, [isModalOpen]);
+  
   return (
     <>
-      <button
-        className="px-4 py-2 bg-red-500 text-white rounded"
-        onClick={() => setIsModalOpen(true)}
+      <Button appearance='minimal' backgroundColor='yellowTint'
+        onClick={() => {setIsModalOpen(true); console.log("Opening modal...");}}
       >
         Change Password
-      </button>
+      </Button>
 
       {isModalOpen && (
         <ChangePasswordModal
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {setIsModalOpen(false); console.log("onClose triggered")}}
           username={username}
         />
       )}

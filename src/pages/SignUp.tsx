@@ -1,5 +1,6 @@
 import { Form, useActionData } from 'react-router'
 import { useState } from 'react'
+import { Pane, Heading, TextInputField, SelectField, Button, Alert, majorScale, minorScale } from 'evergreen-ui'
 
 type ValidationError = {
   field: string
@@ -29,151 +30,40 @@ export default function SignUp() {
   }
 
   const getError = (field: string) => {
-    return actionData?.errors?.find((error) => error.field === field)?.message || ''
+    return actionData?.errors?.find((error) => error.field === field)?.message || undefined
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 border rounded-lg shadow-lg">
-      <h2 className="text-xl font-semibold mb-4">Sign Up</h2>
-      <Form method="post" className="space-y-4">
-        {/* Username */}
-        <div>
-          <label className="block font-medium">Username</label>
-          <input
-            type="text"
-            name="username"
-            value={formValues.username}
-            onChange={handleChange}
-            placeholder='Username'
-            className="w-full p-2 border rounded"
-          />
-          <p className="text-red-500 text-sm">{getError('username')}</p>
-        </div>
-
-        {/* Password */}
-        <div>
-          <label className="block font-medium">Password</label>
-          <input
-            type="password"
-            name="password"
-            value={formValues.password}
-            onChange={handleChange}
-            placeholder='Password'
-            className="w-full p-2 border rounded"
-          />
-          <p className="text-red-500 text-sm">{getError('password')}</p>
-        </div>
-
-        {/* Password confirm */}
-        <div>
-          <label className="block font-medium">Repeat password</label>
-          <input
-            type="password"
-            name="passwordConfirm"
-            value={formValues.passwordConfirm}
-            onChange={handleChange}
-            placeholder='Password'
-            className="w-full p-2 border rounded"
-          />
-          <p className="text-red-500 text-sm">{getError('passwordConfirm')}</p>
-        </div>
-
-        {/* Email */}
-        <div>
-          <label className="block font-medium">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formValues.email}
-            onChange={handleChange}
-            placeholder='Email'
-            className="w-full p-2 border rounded"
-          />
-          <p className="text-red-500 text-sm">{getError('email')}</p>
-        </div>
-
-        {/* Age */}
-        <div>
-          <label className="block font-medium">Age</label>
-          <input
-            type="text"
-            name="age"
-            value={formValues.age}
-            onChange={handleChange}
-            placeholder='Age'
-            className="w-full p-2 border rounded"
-          />
-          <p className="text-red-500 text-sm">{getError('age')}</p>
-        </div>
-
-        {/* Gender */}
-        <div>
-          <label className="block font-medium">Gender</label>
-          <select
-            name="gender"
-            value={formValues.gender}
-            onChange={handleChange}
-            defaultValue={''}
-            className="w-full p-2 border rounded"
-          >
-            <option value="UNKNOWN">Select</option>
+    <Pane display='flex' flexDirection='column' justifyContent='center' alignItems='center' paddingTop={majorScale(5)} gap={0}>
+      <Pane display='flex' justifyContent='center' alignItems='center' background='yellow100' width='60%' height={50} elevation={1}>
+        <Heading size={700} marginBottom={0} background='yellow100'>Sign Up</Heading>
+      </Pane>
+      <Pane width='60%' maxWidth={500} marginX='auto' marginTop={0} padding={majorScale(3)} borderBottomLeftRadius={minorScale(1)} borderBottomRightRadius={minorScale(1)} elevation={1} background='white'>
+        <Form method="post">
+          <TextInputField label="Username" name="username" value={formValues.username} onChange={handleChange} placeholder="Enter your username" isInvalid={!!getError('username')} validationMessage={getError('username')} />
+          <TextInputField label="Email" name="email" type="email" value={formValues.email} onChange={handleChange} placeholder="Enter your email" isInvalid={!!getError('email')} validationMessage={getError('email')} />
+          <TextInputField label="Password" name="password" type="password" value={formValues.password} onChange={handleChange} placeholder="Enter your password" isInvalid={!!getError('password')} validationMessage={getError('password')} />
+          <TextInputField label="Confirm Password" name="passwordConfirm" type="password" value={formValues.passwordConfirm} onChange={handleChange} placeholder="Confirm your password" isInvalid={!!getError('passwordConfirm')} validationMessage={getError('passwordConfirm')} />
+          <TextInputField label="Age" name="age" type="number" value={formValues.age} onChange={handleChange} placeholder="Enter your age" isInvalid={!!getError('age')} validationMessage={getError('age')} />
+          <SelectField label="Gender" name="gender" value={formValues.gender} onChange={handleChange} isInvalid={!!getError('gender')} validationMessage={getError('gender')}>
+            <option value="">Select</option>
             <option value="FEMALE">Female</option>
             <option value="MALE">Male</option>
             <option value="OTHER">Other</option>
-          </select>
-          <p className="text-red-500 text-sm">{getError('gender')}</p>
-        </div>
-
-        {/* Address */}
-        <div>
-          <label className="block font-medium">Province</label>
-          <input
-            type="text"
-            name="province"
-            value={formValues.province}
-            onChange={handleChange}
-            placeholder='Province'
-            className="w-full p-2 border rounded"
-          />
-          <p className="text-red-500 text-sm">{getError('province')}</p>
-        </div>
-
-        <div>
-          <label className="block font-medium">District</label>
-          <input
-            type="text"
-            name="district"
-            value={formValues.district}
-            onChange={handleChange}
-            placeholder='District'
-            className="w-full p-2 border rounded"
-          />
-          <p className="text-red-500 text-sm">{getError('district')}</p>
-        </div>
-
-        <div>
-          <label className="block font-medium">Street and Number</label>
-          <input
-            type="text"
-            name="streetAndNumber"
-            value={formValues.streetAndNumber}
-            onChange={handleChange}
-            placeholder='Street and Number'
-            className="w-full p-2 border rounded"
-          />
-          <p className="text-red-500 text-sm">{getError('streetAndNumber')}</p>
-        </div>
-
-        {/* Submit Button */}
-        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-          Sign Up
-        </button>
-
-        {/* Server Error */}
-        {getError('server') && (
-          <p className="text-red-500 text-center mt-2">{getError('server')}</p>
-        )}
-      </Form>
-    </div>
-  )
+          </SelectField>
+          <TextInputField label="Province" name="province" value={formValues.province} onChange={handleChange} placeholder="Enter your province" isInvalid={!!getError('province')} validationMessage={getError('province')} />
+          <TextInputField label="District" name="district" value={formValues.district} onChange={handleChange} placeholder="Enter your district" isInvalid={!!getError('district')} validationMessage={getError('district')} />
+          <TextInputField label="Street and Number" name="streetAndNumber" value={formValues.streetAndNumber} onChange={handleChange} placeholder="Enter your street and number" isInvalid={!!getError('streetAndNumber')} validationMessage={getError('streetAndNumber')} />
+          
+          <Pane display='flex' justifyContent='center' alignItems='center' marginTop={majorScale(6)}>
+            <Button appearance='minimal' backgroundColor='yellowTint' type="submit">Sign Up</Button>
+          </Pane>
+          
+          {getError('server') && (
+            <Alert intent="danger" title={getError('server')} marginTop={majorScale(2)} />
+          )}
+        </Form>
+      </Pane>
+    </Pane>
+  );
 }

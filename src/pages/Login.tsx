@@ -1,5 +1,6 @@
 import { Form, useActionData } from 'react-router'
 import { useState } from 'react'
+import { Pane, Heading, TextInputField, Button, Alert, majorScale, minorScale } from 'evergreen-ui'
 
 type ValidationError = {
   field: string
@@ -22,51 +23,50 @@ export default function Login() {
   }
 
   const getError = (field: string) => {
-    return actionData?.errors?.find((error) => error.field === field)?.message || ''
+    return actionData?.errors?.find((error) => error.field === field)?.message || undefined
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 border rounded-lg shadow-lg">
-      <h2 className="text-xl font-semibold mb-4">Login</h2>
-      <Form method="post" className="space-y-4">
-        {/* Username */}
-        <div>
-          <label className="block font-medium">Username</label>
-          <input
-            type="text"
+    <Pane display='flex' flexDirection='column' justifyContent='center' alignItems='center' paddingTop={majorScale(5)} gap={0}>
+      <Pane display='flex' justifyContent='center' alignItems= 'center' background='yellow100' width='60%' maxWidth={500} height={50} elevation={1}>
+        <Heading size={700} marginBottom={0} background='yellow100'>Login</Heading>
+      </Pane>
+      <Pane width='60%' maxWidth={500} marginX='auto' marginTop={0} padding={majorScale(3)} borderBottomLeftRadius={minorScale(1)} borderBottomRightRadius={minorScale(1)} elevation={1} background='white'>
+        <Form method="post">
+          {/* Username */}
+          <TextInputField
+            label="Username"
             name="username"
             value={formValues.username}
             onChange={handleChange}
-            placeholder='Username'
-            className="w-full p-2 border rounded"
+            placeholder="Enter your username"
+            isInvalid={!!getError('username')}
+            validationMessage={getError('username')}
           />
-          <p className="text-red-500 text-sm">{getError('username')}</p>
-        </div>
-
-        {/* Password */}
-        <div>
-          <label className="block font-medium">Password</label>
-          <input
-            type="password"
+          
+          {/* Password */}
+          <TextInputField
+            label="Password"
             name="password"
+            type="password"
             value={formValues.password}
             onChange={handleChange}
-            placeholder='Password'
-            className="w-full p-2 border rounded"
+            placeholder="Enter your password"
+            isInvalid={!!getError('password')}
+            validationMessage={getError('password')}
           />
-          <p className="text-red-500 text-sm">{getError('password')}</p>
-        </div>
-
-        {/* Submit Button */}
-        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-          Login
-        </button>
-
-        {/* Server Error */}
-        {getError('server') && (
-          <p className="text-red-500 text-center mt-2">{getError('server')}</p>
-        )}
-      </Form>
-    </div>
-  )
+          
+          {/* Submit Button */}
+          <Pane display='flex' justifyContent='center' alignItems='center' marginTop={majorScale(6)}>
+            <Button appearance='minimal' backgroundColor='yellowTint' type="submit">Login</Button>
+          </Pane>
+          
+          {/* Server Error */}
+          {getError('server') && (
+            <Alert intent="danger" title={getError('server')} marginTop={majorScale(2)} />
+          )}
+        </Form>
+      </Pane>
+    </Pane>
+  );
 }

@@ -32,12 +32,14 @@ export const loginAction: ActionFunction = async ({ request }) => {
 
     // Store token in localStorage (or sessionStorage if preferred)
     localStorage.setItem('jwt', token)
+    localStorage.setItem('username', loginData.username)
+    window.dispatchEvent(new Event('localStorageChange'))
 
     return redirect('/home') // Redirect to home after login
   } catch (err: any) {
     return new Response(
-      JSON.stringify({ errors: [{ field: 'server', message: err.message }] }),
-      { status: err.httpStatus || 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ errors: [{ field: 'server', message: err.statusText }] }),
+      { status: err.status || 500, headers: { 'Content-Type': 'application/json' } }
     )
   }
 }

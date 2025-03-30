@@ -1,26 +1,26 @@
-// src/components/LogoutButton.tsx
-
 import { useNavigate } from 'react-router';
+import { Button, LogOutIcon, majorScale } from 'evergreen-ui';
 
 export default function LogoutButton() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
     // 1. Remove the JWT
-    localStorage.removeItem('jwt');
+    localStorage.removeItem('jwt')
+    localStorage.removeItem('username')
+    window.dispatchEvent(new Event('localStorageChange'))
 
-    // 2. Redirect to login
     navigate('/', { replace: true });
-
-    // 3. Optional: reset global state, clear cache, etc.
   };
 
   return (
-    <button
+    <Button 
+      background='yellowTint'
+      appearance='minimal'
       onClick={handleLogout}
-      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+      style={{ }}
     >
       Log Out
-    </button>
+    </Button>
   );
 }

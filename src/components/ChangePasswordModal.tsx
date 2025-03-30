@@ -1,12 +1,26 @@
-import { useState, useEffect } from "react";
-import { useFetcher, useNavigate } from "react-router";
+import { useState, useEffect, useRef } from "react";
+import { Form, useActionData, useNavigation, useNavigate, useFetcher } from "react-router";
+import { Pane, Heading, TextInputField, Button, Alert, majorScale, minorScale } from "evergreen-ui";
 
 interface ChangePasswordModalProps {
   onClose: () => void;
   username: string;
 }
 
+type ValidationError = {
+  field: string;
+  message: string;
+};
+
+type ActionData = {
+  errors?: ValidationError[];
+  success?: boolean;
+};
+
 const ChangePasswordModal = ({ onClose, username }: ChangePasswordModalProps) => {
+  const actionData = useActionData() as ActionData;
+  const firstInputRef = useRef<HTMLInputElement | null>(null);
+  
   const fetcher = useFetcher();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -23,16 +37,20 @@ const ChangePasswordModal = ({ onClose, username }: ChangePasswordModalProps) =>
   };
 
   const handleSubmit = (e: React.FormEvent) => {
+    console.log('HandleSubmit called');
     e.preventDefault();
     setErrors({});
     setSuccess("");
     setIsSubmitting(true);
+    console.log('This is from ChangePasswordModal 1111:\nformData: ', formData);
     
     if (formData.newPassword !== formData.confirmPassword) {
       setErrors({ confirmPassword: "New passwords do not match" });
       setIsSubmitting(false);
       return;
     }
+
+    console.log('This is from ChangePasswordModal:\nformData: ', formData);
     
     const formDataObj = new FormData();
     formDataObj.append("oldPassword", formData.oldPassword);
@@ -66,57 +84,48 @@ const ChangePasswordModal = ({ onClose, username }: ChangePasswordModalProps) =>
   }, [fetcher.state, fetcher.data, onClose]);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-xl font-semibold mb-4">Change Password</h2>
-        {success && <p className="text-green-500 text-sm mb-2">{success}</p>}
-        <form onSubmit={handleSubmit}>
-          <div>
-            <input
-              type="password"
-              name="oldPassword"
-              placeholder="Current Password"
-              className="w-full p-2 border rounded mb-1"
-              value={formData.oldPassword}
-              onChange={handleChange}
-              required
-            />
-            {errors.oldPassword && <p className="text-red-500 text-sm mb-2">{errors.oldPassword}</p>}
-          </div>
-          <div>
-            <input
-              type="password"
-              name="newPassword"
-              placeholder="New Password"
-              className="w-full p-2 border rounded mb-1"
-              value={formData.newPassword}
-              onChange={handleChange}
-              required
-            />
-            {errors.newPassword && <p className="text-red-500 text-sm mb-2">{errors.newPassword}</p>}
-          </div>
-          <div>
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm New Password"
-              className="w-full p-2 border rounded mb-1"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
-            {errors.confirmPassword && <p className="text-red-500 text-sm mb-2">{errors.confirmPassword}</p>}
-          </div>
-          {errors.server && <p className="text-red-500 text-sm mb-2">{errors.server}</p>}
-          <div className="flex justify-end space-x-2 mt-4">
-            <button type="button" className="px-4 py-2 bg-gray-300 rounded" onClick={onClose}>Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded" disabled={isSubmitting}>
-              {isSubmitting ? "Updating..." : "Update"}
-            </button>
-          </div>
+    <Pane position="fixed" top={0} left={0} right={0} bottom={0} display="flex" alignItems="center" justifyContent="center" background="rgba(0,0,0,0.5)">
+      <Pane width="60%" maxWidth={500} background="white" padding={majorScale(3)} borderRadius={minorScale(1)} elevation={3}>
+        <Heading size={700} marginBottom={majorScale(2)} textAlign="center">Change Password</Heading>
+        {actionData?.success && <Alert intent="success" title="Password updated successfully" marginBottom={majorScale(2)} />}
+
+        <form>
+          <TextInputField
+            label="Current Password"
+            name="oldPassword"
+            value={formData.oldPassword}
+            onChange={handleChange}
+            type="password"
+            ref={firstInputRef}
+            isInvalid={!!errors.oldPassword}
+            validationMessage={errors.oldPassword}
+          />
+          <TextInputField
+            label="New Password"
+            name="newPassword"
+            value={formData.newPassword}
+            onChange={handleChange}
+            type="password"
+            isInvalid={!!errors.newPassword}
+            validationMessage={errors.newPassword}
+          />
+          <TextInputField
+            label="Confirm New Password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            type="password"
+            isInvalid={!!errors.confirmPassword}
+            validationMessage={errors.confirmPassword}
+          />
+          {errors.server && <Alert intent="danger" title={errors.server} marginBottom={majorScale(2)} />}
+          <Pane display="flex" justifyContent="center" alignItems="center" marginTop={majorScale(3)} gap={majorScale(2)}>
+            <Button appearance="minimal" onClick={onClose} disabled={isSubmitting}>Cancel</Button>
+            <Button appearance="primary" onClick={handleSubmit} isLoading={isSubmitting}>{isSubmitting ? "Updating..." : "Update"}</Button>
+          </Pane>
         </form>
-      </div>
-    </div>
+      </Pane>
+    </Pane>
   );
 };
 
