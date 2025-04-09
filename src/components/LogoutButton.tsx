@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router';
-import { Button, LogOutIcon, majorScale } from 'evergreen-ui';
+import { useNavigate } from 'react-router'
+import { Button, LogOutIcon, majorScale } from 'evergreen-ui'
 
 export default function LogoutButton() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleLogout = () => {
     // 1. Remove the JWT
@@ -10,8 +10,8 @@ export default function LogoutButton() {
     localStorage.removeItem('username')
     window.dispatchEvent(new Event('localStorageChange'))
 
-    navigate('/', { replace: true });
-  };
+    navigate('/', { replace: true })
+  }
 
   return (
     <Button 
@@ -22,5 +22,5 @@ export default function LogoutButton() {
     >
       Log Out
     </Button>
-  );
+  )
 }

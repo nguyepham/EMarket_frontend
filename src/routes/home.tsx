@@ -1,13 +1,12 @@
 import bcrypt from "bcryptjs"
-import { ENDPOINTS } from "../constants"
 
 export async function homeLoader(): Promise<string> {
-  console.log('customer1N: ', await bcrypt.hash('customer1N', 12))
-  console.log('merchant1N: ', await bcrypt.hash('merchant1N', 12))
-  console.log('admin1N: ', await bcrypt.hash('admin1N', 12))
+  console.log('customerN1: ', await bcrypt.hash('customerN1', 12))
+  console.log('merchantN1: ', await bcrypt.hash('merchantN1', 12))
+  console.log('adminN1: ', await bcrypt.hash('adminN1', 12))
   const token = localStorage.getItem('jwt')
 
-  const res = await fetch(import.meta.env.VITE_API_BASE_URL + ENDPOINTS.HOME, {
+  const res = await fetch(import.meta.env.VITE_API_BASE_URL + 'home', {
     headers: {
       Authorization: `Bearer ${token}`,
     },

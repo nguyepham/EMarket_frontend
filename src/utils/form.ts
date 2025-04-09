@@ -1,4 +1,4 @@
-import { UserUpdate } from "../types/api"
+import { ProfileUpdate } from "../types/model/ProfileUpdate"
 
 export type ValidationError = {
   field: string
@@ -13,21 +13,27 @@ export type ValidationResult<T> = {
 function toDisplayFieldName(fieldName: string): string {
   switch (fieldName) {
     case 'username':
-      return 'Username'
+      return 'Tên đăng nhập'
     case 'password':
-      return 'Password'
+      return 'Mật khẩu'
     case 'passwordConfirm':
-      return 'Password confirmation'
+      return 'Mật khẩu xác nhận'
     case 'email':
       return 'Email'
     case 'age':
-      return 'Age'
+      return 'Tuổi'
     case 'province':
-      return 'Province'
+      return 'Tỉnh/thành phố'
     case 'district':
-      return 'District'
+      return 'Xã/phường'
     case 'streetAndNumber':
-      return 'Street and number'
+      return 'Số nhà và tên đường'
+    case 'oldPassword':
+      return 'Mật khẩu hiện tại'
+    case 'newPassword':
+      return 'Mật khẩu mới'
+    case 'confirmPassword':
+      return 'Xác nhận mật khẩu mới'
     default:
       return fieldName
   }
@@ -47,35 +53,35 @@ export class FormFieldValidator<T = string> {
 
   required(): this {
     if (!this.value) {
-      this.error = `${toDisplayFieldName(this.fieldName)} is required`
+      this.error = `${toDisplayFieldName(this.fieldName)} là bắt buộc`
     }
     return this
   }
 
   minLength(min: number): this {
     if (!this.error && this.value.length < min) {
-      this.error = `${toDisplayFieldName(this.fieldName)} must be at least ${min} characters`
+      this.error = `${toDisplayFieldName(this.fieldName)} phải có ít nhất ${min} ký tự`
     }
     return this
   }
 
   maxLength(max: number): this {
     if (!this.error && this.value.length > max) {
-      this.error = `${toDisplayFieldName(this.fieldName)} must be at most ${max} characters`
+      this.error = `${toDisplayFieldName(this.fieldName)} chỉ được chứa nhiều nhất ${max} ký tự`
     }
     return this
   }
 
   containsNumber(): this {
     if (!this.error && !/\d/.test(this.value)) {
-      this.error = `${toDisplayFieldName(this.fieldName)} must contain a number`
+      this.error = `${toDisplayFieldName(this.fieldName)} phải chứa ít nhất một chữ số`
     }
     return this
   }
 
   containsCapitalLetter(): this {
     if (!this.error && !/[A-Z]/.test(this.value)) {
-      this.error = `${toDisplayFieldName(this.fieldName)} must contain a capital letter`
+      this.error = `${toDisplayFieldName(this.fieldName)} phải chứa ít nhất một chữ cái viết hoa`
     }
     return this
   }
@@ -83,7 +89,7 @@ export class FormFieldValidator<T = string> {
   isEmail(): this {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (this.value && !this.error && !emailRegex.test(this.value)) {
-      this.error = `${toDisplayFieldName(this.fieldName)} must be a valid email address`
+      this.error = `${toDisplayFieldName(this.fieldName)} không hợp lệ`
     }
     return this
   }
@@ -96,11 +102,11 @@ export class FormFieldValidator<T = string> {
     if (!this.value) return this
     const number = Number(this.value)
     if (isNaN(number)) {
-      this.error = `${toDisplayFieldName(this.fieldName)} must be a valid number`
+      this.error = `${toDisplayFieldName(this.fieldName)} phải là một số`
       return this
     }
     if (min !== undefined && number < min) {
-      this.error = `${toDisplayFieldName(this.fieldName)} must be at least ${min}`
+      this.error = `${toDisplayFieldName(this.fieldName)} không được nhỏ hơn ${min}`
     }
     return this
   }
@@ -108,18 +114,18 @@ export class FormFieldValidator<T = string> {
   maxNumber(max?: number): this {
     const number = Number(this.value)
     if (isNaN(number)) {
-      this.error = `${toDisplayFieldName(this.fieldName)} must be a valid number`
+      this.error = `${toDisplayFieldName(this.fieldName)} phải là một số`
       return this
     }
     if (max !== undefined && number > max) {
-      this.error = `${toDisplayFieldName(this.fieldName)} must be at most ${max}`
+      this.error = `${toDisplayFieldName(this.fieldName)} không được lớn hơn ${max}`
     }
     return this
   }
 
   isGender(): this {
-    const allowedGenders: UserUpdate["gender"][] = ["FEMALE", "MALE", "OTHER", "UNKNOWN"];
-    if (!allowedGenders.includes(this.value as UserUpdate['gender'])) {
+    const allowedGenders: ProfileUpdate["gender"][] = ["FEMALE", "MALE", "OTHER", "UNKNOWN"]
+    if (!allowedGenders.includes(this.value as ProfileUpdate['gender'])) {
       this.error = `${toDisplayFieldName(this.fieldName)} must be one of ${allowedGenders.join(", ")}`
     }
     return this

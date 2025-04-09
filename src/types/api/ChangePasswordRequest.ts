@@ -1,7 +1,7 @@
 export type ChangePasswordRequest = {
-  oldPassword: string;
+  oldPassword: string
   newPassword: {
-    text: string;
-    updatedAt: string;
+    text: string
+    updatedAt: string
   }
 }

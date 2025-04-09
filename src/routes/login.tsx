@@ -1,7 +1,26 @@
 import { ActionFunction, redirect } from 'react-router'
-import { login } from '../api/authApi'
 import { FormFieldValidator, validateForm } from '../utils/form'
-import { LoginRequest } from '../types/api'
+import { FormActionData } from '../types/FormActionData'
+import { apiRequest } from '../utils/api'
+
+type LoginRequest = {
+  username: string
+  password: string
+}
+
+type LoginResponse = {
+  status?: number
+  statusText?: string
+  text?: string
+}
+
+export const loginLoader = () => {
+  const token = localStorage.getItem('jwt')
+  if (token) {
+    return redirect('/home')
+  }
+  return null
+}
 
 export const loginAction: ActionFunction = async ({ request }) => {
   const formData = await request.formData()
@@ -13,13 +32,10 @@ export const loginAction: ActionFunction = async ({ request }) => {
   })
 
   if (errors.length > 0 || !data) {
-    return new Response(
-      JSON.stringify({ errors: errors.length > 0 ? errors : [{ field: 'server', message: 'Form data is missing' }] }),
-      {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    )
+    return {
+      errors: errors.length > 0 ? errors : [{ field: 'server', message: 'Form data is missing' }],
+      success: false,
+    } as FormActionData
   }  
 
   const loginData: LoginRequest = {
@@ -28,18 +44,30 @@ export const loginAction: ActionFunction = async ({ request }) => {
   }
 
   try {
-    const token = await login(loginData)
+    // const token = await login(loginData)
+    const res = await apiRequest<LoginResponse>('/auth/login', false, {
+      method: 'POST',
+      body: JSON.stringify(loginData),
+    })
 
-    // Store token in localStorage (or sessionStorage if preferred)
-    localStorage.setItem('jwt', token)
-    localStorage.setItem('username', loginData.username)
-    window.dispatchEvent(new Event('localStorageChange'))
+    console.log('res: ', res)
 
-    return redirect('/home') // Redirect to home after login
+    if (res?.status && res?.statusText) {
+      return {
+        errors: [{ field: 'server', message: 'Tên đăng nhập hoặc mật khẩu không đúng' }],
+        success: false,
+      } as FormActionData
+    }
+    return {
+      success: true,
+      token: res?.text,
+      username: loginData.username,
+    } as FormActionData
+    
   } catch (err: any) {
-    return new Response(
-      JSON.stringify({ errors: [{ field: 'server', message: err.statusText }] }),
-      { status: err.status || 500, headers: { 'Content-Type': 'application/json' } }
-    )
+    return {
+      errors: [{ field: 'server', message: err.statusText || 'Đăng nhập thất bại' }],
+      success: false,
+    } as FormActionData
   }
 }

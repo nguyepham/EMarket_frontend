@@ -1,5 +1,5 @@
 export type Address = {
-  province: string;
-  district: string;
-  streetAndNumber: string;
+  province: string
+  district: string
+  streetAndNumber: string
 }

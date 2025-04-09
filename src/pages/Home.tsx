@@ -1,12 +1,9 @@
-import { Link, useLoaderData } from 'react-router'
-import LogoutButton from '../components/LogoutButton'
-
 export default function Home() {
-  const welcomeMessage = useLoaderData() as string
+  const welcomeMessage = 'Chào mừng đến với EMarket, '+ localStorage.getItem('username') + '!'
 
   return (
-    <div className="p-4 text-xl">
-      {welcomeMessage}
+    <div style={{height: '100vh'}}>
+      {localStorage.getItem('username') ? welcomeMessage : 'Chào mừng đến với EMarket!'}
     </div>
   )
 }

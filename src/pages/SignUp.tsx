@@ -1,18 +1,17 @@
-import { Form, useActionData } from 'react-router'
-import { useState } from 'react'
-import { Pane, Heading, TextInputField, SelectField, Button, Alert, majorScale, minorScale } from 'evergreen-ui'
-
-type ValidationError = {
-  field: string
-  message: string
-}
-
-type ActionData = {
-  errors?: ValidationError[]
-}
+import { Form, useActionData, useNavigate, useNavigation } from 'react-router'
+import { useEffect, useState } from 'react'
+import { Pane, TextInputField, SelectField, Alert, majorScale } from 'evergreen-ui'
+import CustomButton from '../components/CustomButton'
+import FormContainerHeader from '../components/FormContainerHeader'
+import FormContainerBody from '../components/FormContainerBody'
+import { FormActionData } from '../types/FormActionData'
 
 export default function SignUp() {
-  const actionData = useActionData() as ActionData
+  const navigation = useNavigation()
+  const isSubmitting = navigation.state === "submitting"
+  
+  const actionData = useActionData() as FormActionData
+  const redirect = useNavigate()
   const [formValues, setFormValues] = useState({
     username: '',
     password: '',
@@ -33,37 +32,54 @@ export default function SignUp() {
     return actionData?.errors?.find((error) => error.field === field)?.message || undefined
   }
 
+  useEffect(() => {
+    if (actionData?.success === true) {
+      setTimeout(() => { 
+        setFormValues({
+          username: '',
+          password: '',
+          passwordConfirm: '',
+          email: '',
+          age: '',
+          gender: '',
+          province: '',
+          district: '',
+          streetAndNumber: '',
+        })
+        redirect('/auth/login') // Redirect to login after sign up
+      }, 2000)
+  }}, [actionData?.success]
+)
+
   return (
-    <Pane display='flex' flexDirection='column' justifyContent='center' alignItems='center' paddingTop={majorScale(5)} gap={0}>
-      <Pane display='flex' justifyContent='center' alignItems='center' background='yellow100' width='60%' height={50} elevation={1}>
-        <Heading size={700} marginBottom={0} background='yellow100'>Sign Up</Heading>
-      </Pane>
-      <Pane width='60%' maxWidth={500} marginX='auto' marginTop={0} padding={majorScale(3)} borderBottomLeftRadius={minorScale(1)} borderBottomRightRadius={minorScale(1)} elevation={1} background='white'>
+    <Pane display='flex' flexDirection='column' justifyContent='center' alignItems='center' paddingTop={majorScale(10)} paddingBottom={'28vh'} gap={0}>
+      <FormContainerHeader text={'Đăng ký'}/>
+      <FormContainerBody>
         <Form method="post">
-          <TextInputField label="Username" name="username" value={formValues.username} onChange={handleChange} placeholder="Enter your username" isInvalid={!!getError('username')} validationMessage={getError('username')} />
-          <TextInputField label="Email" name="email" type="email" value={formValues.email} onChange={handleChange} placeholder="Enter your email" isInvalid={!!getError('email')} validationMessage={getError('email')} />
-          <TextInputField label="Password" name="password" type="password" value={formValues.password} onChange={handleChange} placeholder="Enter your password" isInvalid={!!getError('password')} validationMessage={getError('password')} />
-          <TextInputField label="Confirm Password" name="passwordConfirm" type="password" value={formValues.passwordConfirm} onChange={handleChange} placeholder="Confirm your password" isInvalid={!!getError('passwordConfirm')} validationMessage={getError('passwordConfirm')} />
-          <TextInputField label="Age" name="age" type="number" value={formValues.age} onChange={handleChange} placeholder="Enter your age" isInvalid={!!getError('age')} validationMessage={getError('age')} />
-          <SelectField label="Gender" name="gender" value={formValues.gender} onChange={handleChange} isInvalid={!!getError('gender')} validationMessage={getError('gender')}>
-            <option value="">Select</option>
-            <option value="FEMALE">Female</option>
-            <option value="MALE">Male</option>
-            <option value="OTHER">Other</option>
+          <TextInputField label="Tên đăng nhập:" name="username" value={formValues.username} onChange={handleChange} placeholder="Tên đăng nhập" isInvalid={!!getError('username')} validationMessage={getError('username')} />
+          <TextInputField label="Mật khẩu:" name="password" type="password" value={formValues.password} onChange={handleChange} placeholder="Mật khẩu" isInvalid={!!getError('password')} validationMessage={getError('password')} />
+          <TextInputField label="Xác nhận mật khẩu:" name="passwordConfirm" type="password" value={formValues.passwordConfirm} onChange={handleChange} placeholder="Mật khẩu" isInvalid={!!getError('passwordConfirm')} validationMessage={getError('passwordConfirm')} />
+          <TextInputField label="Email:" name="email" type="email" value={formValues.email} onChange={handleChange} placeholder="Email" isInvalid={!!getError('email')} validationMessage={getError('email')} />
+          <TextInputField label="Tuổi:" name="age" value={formValues.age} onChange={handleChange} placeholder="Tuổi" isInvalid={!!getError('age')} validationMessage={getError('age')} />
+          <SelectField label="Giới tính:" name="gender" value={formValues.gender} onChange={handleChange} isInvalid={!!getError('gender')} validationMessage={getError('gender')}>
+            <option value="UNKNOWN">Chọn giới tính</option>
+            <option value="FEMALE">Nữ</option>
+            <option value="MALE">Nam</option>
+            <option value="OTHER">Khác</option>
           </SelectField>
-          <TextInputField label="Province" name="province" value={formValues.province} onChange={handleChange} placeholder="Enter your province" isInvalid={!!getError('province')} validationMessage={getError('province')} />
-          <TextInputField label="District" name="district" value={formValues.district} onChange={handleChange} placeholder="Enter your district" isInvalid={!!getError('district')} validationMessage={getError('district')} />
-          <TextInputField label="Street and Number" name="streetAndNumber" value={formValues.streetAndNumber} onChange={handleChange} placeholder="Enter your street and number" isInvalid={!!getError('streetAndNumber')} validationMessage={getError('streetAndNumber')} />
+          <TextInputField label="Tỉnh/thành phố:" name="province" value={formValues.province} onChange={handleChange} placeholder="Tỉnh/thành phố" isInvalid={!!getError('province')} validationMessage={getError('province')} />
+          <TextInputField label="Xã/phường:" name="district" value={formValues.district} onChange={handleChange} placeholder="Xã/phường" isInvalid={!!getError('district')} validationMessage={getError('district')} />
+          <TextInputField label="Số nhà và tên đường:" name="streetAndNumber" value={formValues.streetAndNumber} onChange={handleChange} placeholder="Số nhà và tên đường" isInvalid={!!getError('streetAndNumber')} validationMessage={getError('streetAndNumber')} />
           
           <Pane display='flex' justifyContent='center' alignItems='center' marginTop={majorScale(6)}>
-            <Button appearance='minimal' backgroundColor='yellowTint' type="submit">Sign Up</Button>
+            <CustomButton text={'Xác nhận'} width={'100%'} isLoading={isSubmitting} />
           </Pane>
-          
-          {getError('server') && (
-            <Alert intent="danger" title={getError('server')} marginTop={majorScale(2)} />
-          )}
         </Form>
-      </Pane>
+      </FormContainerBody>
+      {getError('server') && (
+        <Alert intent="danger" title={getError('server')} marginTop={majorScale(2)} />
+      )}
+      {actionData?.success && <Alert intent="success" title="Đăng ký tài khoản thành công." marginTop={majorScale(2)} />}
     </Pane>
-  );
+  )
 }

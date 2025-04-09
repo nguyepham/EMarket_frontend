@@ -1,18 +1,17 @@
-import { Form, useActionData } from 'react-router'
-import { useState } from 'react'
-import { Pane, Heading, TextInputField, Button, Alert, majorScale, minorScale } from 'evergreen-ui'
-
-type ValidationError = {
-  field: string
-  message: string
-}
-
-type ActionData = {
-  errors?: ValidationError[]
-}
+import { Form, useNavigate, useActionData, useNavigation } from 'react-router'
+import { useEffect, useState } from 'react'
+import { Pane, TextInputField, Alert, majorScale} from 'evergreen-ui'
+import CustomButton from '../components/CustomButton'
+import FormContainerHeader from '../components/FormContainerHeader'
+import FormContainerBody from '../components/FormContainerBody'
+import { FormActionData } from '../types/FormActionData'
 
 export default function Login() {
-  const actionData = useActionData() as ActionData
+  const navigation = useNavigation()
+  const isSubmitting = navigation.state === "submitting"
+
+  const actionData = useActionData() as FormActionData
+  const redirect = useNavigate()
   const [formValues, setFormValues] = useState({
     username: '',
     password: '',
@@ -26,47 +25,59 @@ export default function Login() {
     return actionData?.errors?.find((error) => error.field === field)?.message || undefined
   }
 
+  useEffect(() => {
+    if (actionData?.success === true) {
+      setTimeout(() => {
+        setFormValues({
+          username: '',
+          password: '',
+        })
+        // Store token in localStorage (or sessionStorage if preferred)
+        localStorage.setItem('jwt', actionData.token)
+        localStorage.setItem('username', actionData.username)
+        window.dispatchEvent(new Event('localStorageChange'))
+    
+        redirect('/home') // Redirect to home after login
+      }, 2000)
+    }}, [actionData?.success]
+  )
+
   return (
-    <Pane display='flex' flexDirection='column' justifyContent='center' alignItems='center' paddingTop={majorScale(5)} gap={0}>
-      <Pane display='flex' justifyContent='center' alignItems= 'center' background='yellow100' width='60%' maxWidth={500} height={50} elevation={1}>
-        <Heading size={700} marginBottom={0} background='yellow100'>Login</Heading>
-      </Pane>
-      <Pane width='60%' maxWidth={500} marginX='auto' marginTop={0} padding={majorScale(3)} borderBottomLeftRadius={minorScale(1)} borderBottomRightRadius={minorScale(1)} elevation={1} background='white'>
+    <Pane display='flex' flexDirection='column' justifyContent='center' alignItems='center' paddingTop={majorScale(10)} paddingBottom={'28vh'} gap={0}>
+      <FormContainerHeader text={'Đăng nhập'}/>
+      <FormContainerBody>
         <Form method="post">
           {/* Username */}
           <TextInputField
-            label="Username"
+            label="Tên đăng nhập:"
             name="username"
             value={formValues.username}
             onChange={handleChange}
-            placeholder="Enter your username"
+            placeholder="Tên đăng nhập"
             isInvalid={!!getError('username')}
             validationMessage={getError('username')}
           />
           
           {/* Password */}
           <TextInputField
-            label="Password"
+            label="Mật khẩu:"
             name="password"
             type="password"
             value={formValues.password}
             onChange={handleChange}
-            placeholder="Enter your password"
+            placeholder="Mật khẩu"
             isInvalid={!!getError('password')}
             validationMessage={getError('password')}
           />
-          
-          {/* Submit Button */}
           <Pane display='flex' justifyContent='center' alignItems='center' marginTop={majorScale(6)}>
-            <Button appearance='minimal' backgroundColor='yellowTint' type="submit">Login</Button>
+            <CustomButton text={'Xác nhận'} width={'100%'} isLoading={isSubmitting}/>
           </Pane>
-          
-          {/* Server Error */}
-          {getError('server') && (
-            <Alert intent="danger" title={getError('server')} marginTop={majorScale(2)} />
-          )}
         </Form>
-      </Pane>
+      </FormContainerBody>
+      {getError('server') && (
+        <Alert intent="danger" title={getError('server')} marginTop={majorScale(2)} />
+      )}
+      {actionData?.success && <Alert intent="success" title="Đăng nhập thành công." marginTop={majorScale(2)} />}
     </Pane>
-  );
+  )
 }
