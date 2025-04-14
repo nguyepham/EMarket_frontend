@@ -1,7 +1,7 @@
 import { ActionFunctionArgs } from 'react-router'
 import { FormFieldValidator, validateForm } from '../utils/form'
 import bcrypt from 'bcryptjs'
-import { FormActionData } from '../types/FormActionData'
+import { FormActionData } from '../types/data'
 import { apiRequest } from '../utils/api'
 
 type SignUpRequest = {
@@ -12,7 +12,7 @@ type SignUpRequest = {
   }
   email?: string
   age: number
-  gender?: "FEMALE" | "MALE" | "OTHER" | "UNKNOWN"
+  gender?: 'FEMALE' | 'MALE' | 'OTHER' | 'UNKNOWN'
   address: {
     province: string
     district: string
@@ -76,7 +76,7 @@ export async function signUpAction({ request }: ActionFunctionArgs) {
   
     try {
       // const token = await login(loginData)
-      const res = await apiRequest<SignUpResponse>('/auth/sign-up', false, {
+      const res = await apiRequest<SignUpResponse>('/auth/sign-up', false, false, {
         method: 'POST',
         body: JSON.stringify(signUpData),
       })
@@ -103,7 +103,7 @@ export async function signUpAction({ request }: ActionFunctionArgs) {
       
     } catch (err: any) {
       return {
-        errors: [{ field: 'server', message: err.statusText || 'Đăng nhập thất bại' }],
+        errors: [{ field: 'server', message: err.statusText || 'Đăng ký thất bại' }],
         success: false,
       } as FormActionData
     }

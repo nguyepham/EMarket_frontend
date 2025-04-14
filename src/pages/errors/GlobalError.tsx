@@ -16,9 +16,9 @@ export default function GlobalError() {
   }
 
   return (
-    <div className="p-4">
+    <div className='p-4'>
       <h1>Something went wrong</h1>
-      <p>{(error as Error).message + " " + (error as Error).stack}</p>
+      <p>{(error as Error).message + ' ' + (error as Error).stack}</p>
     </div>
   )
 }

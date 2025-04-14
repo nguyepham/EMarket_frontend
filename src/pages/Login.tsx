@@ -1,14 +1,20 @@
-import { Form, useNavigate, useActionData, useNavigation } from 'react-router'
+import { Form, useNavigate, useActionData, useNavigation, useOutletContext } from 'react-router'
 import { useEffect, useState } from 'react'
-import { Pane, TextInputField, Alert, majorScale} from 'evergreen-ui'
+import { Pane, Text, Alert, majorScale, minorScale } from 'evergreen-ui'
 import CustomButton from '../components/CustomButton'
 import FormContainerHeader from '../components/FormContainerHeader'
 import FormContainerBody from '../components/FormContainerBody'
-import { FormActionData } from '../types/FormActionData'
+import { FormActionData } from '../types/data'
+import CustomTextInputField from '../components/CustomTextInputField'
+import { COLOR } from '../constants'
+import { RootOutletContextType } from '../types/outletContext'
+import { apiRequest } from '../utils/api'
+import { User } from '../types/model'
 
 export default function Login() {
   const navigation = useNavigation()
-  const isSubmitting = navigation.state === "submitting"
+  const isSubmitting = navigation.state === 'submitting'
+  const { setUsername } = useOutletContext<RootOutletContextType>()
 
   const actionData = useActionData() as FormActionData
   const redirect = useNavigate()
@@ -35,49 +41,70 @@ export default function Login() {
         // Store token in localStorage (or sessionStorage if preferred)
         localStorage.setItem('jwt', actionData.token)
         localStorage.setItem('username', actionData.username)
-        window.dispatchEvent(new Event('localStorageChange'))
-    
+
+        const fetchAvatar = async () => {
+          try {
+            const res = await apiRequest<User>(`/user/${actionData.username}`, true, false)
+            localStorage.setItem('avatarUrl', res.imageUrl!) // Store the new avatar URL in localStorage
+            console.log('Fetched avatar URL:', res.imageUrl)
+          } catch (err) {
+            console.error('Failed to fetch avatar:', err)
+          }
+        }
+        fetchAvatar()
+
+        setUsername(actionData.username)
+
         redirect('/home') // Redirect to home after login
-      }, 2000)
-    }}, [actionData?.success]
+      }, 1000)
+    }
+  }, [actionData?.success]
   )
 
   return (
-    <Pane display='flex' flexDirection='column' justifyContent='center' alignItems='center' paddingTop={majorScale(10)} paddingBottom={'28vh'} gap={0}>
-      <FormContainerHeader text={'Đăng nhập'}/>
+    <Pane
+      display='flex'
+      flexDirection='column'
+      justifyContent='center'
+      alignItems='center'
+      paddingTop={majorScale(10)}
+      paddingBottom={'28vh'} gap={0}
+    >
+      <FormContainerHeader text={'Đăng nhập'} />
       <FormContainerBody>
-        <Form method="post">
+        <Form method='post'>
           {/* Username */}
-          <TextInputField
-            label="Tên đăng nhập:"
-            name="username"
+          <CustomTextInputField
+            label='Tên đăng nhập:'
+            name='username'
             value={formValues.username}
+            // inputHeight={majorScale(5)}
             onChange={handleChange}
-            placeholder="Tên đăng nhập"
+            placeholder='Tên đăng nhập'
             isInvalid={!!getError('username')}
             validationMessage={getError('username')}
           />
-          
+
           {/* Password */}
-          <TextInputField
-            label="Mật khẩu:"
-            name="password"
-            type="password"
+          <CustomTextInputField
+            label='Mật khẩu:'
+            name='password'
+            type='password'
             value={formValues.password}
             onChange={handleChange}
-            placeholder="Mật khẩu"
+            placeholder='Mật khẩu'
             isInvalid={!!getError('password')}
             validationMessage={getError('password')}
           />
-          <Pane display='flex' justifyContent='center' alignItems='center' marginTop={majorScale(6)}>
-            <CustomButton text={'Xác nhận'} width={'100%'} isLoading={isSubmitting}/>
+          <Pane display='flex' justifyContent='center' alignItems='center' marginTop={majorScale(8)}>
+            <CustomButton text={'Đăng nhập'} width={'100%'} isLoading={isSubmitting} />
           </Pane>
         </Form>
       </FormContainerBody>
       {getError('server') && (
-        <Alert intent="danger" title={getError('server')} marginTop={majorScale(2)} />
+        <Alert intent='danger' title={getError('server')} marginTop={majorScale(2)} />
       )}
-      {actionData?.success && <Alert intent="success" title="Đăng nhập thành công." marginTop={majorScale(2)} />}
+      {actionData?.success && <Alert intent='success' title='Đăng nhập thành công.' marginTop={majorScale(2)} />}
     </Pane>
   )
 }

@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs"
+import bcrypt from 'bcryptjs'
 
 export async function homeLoader(): Promise<string> {
   console.log('customerN1: ', await bcrypt.hash('customerN1', 12))

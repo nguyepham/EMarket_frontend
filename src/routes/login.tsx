@@ -1,6 +1,6 @@
 import { ActionFunction, redirect } from 'react-router'
 import { FormFieldValidator, validateForm } from '../utils/form'
-import { FormActionData } from '../types/FormActionData'
+import { FormActionData } from '../types/data'
 import { apiRequest } from '../utils/api'
 
 type LoginRequest = {
@@ -45,12 +45,10 @@ export const loginAction: ActionFunction = async ({ request }) => {
 
   try {
     // const token = await login(loginData)
-    const res = await apiRequest<LoginResponse>('/auth/login', false, {
+    const res = await apiRequest<LoginResponse>('/auth/login', false, false, {
       method: 'POST',
       body: JSON.stringify(loginData),
     })
-
-    console.log('res: ', res)
 
     if (res?.status && res?.statusText) {
       return {

@@ -1,8 +1,8 @@
-import { LoaderFunction, ActionFunction } from "react-router"
-import { validateForm, FormFieldValidator } from "../utils/form"
-import { apiRequest } from "../utils/api"
-import { FormActionData } from "../types/FormActionData"
-import { ProfileUpdate } from "../types/model/ProfileUpdate"
+import { LoaderFunction, ActionFunction } from 'react-router'
+import { validateForm, FormFieldValidator } from '../utils/form'
+import { apiRequest } from '../utils/api'
+import { FormActionData } from '../types/data'
+import { ProfileUpdate } from '../types/model/ProfileUpdate'
 
 type ProfileUpdateResponse = {
   status?: number
@@ -12,7 +12,11 @@ type ProfileUpdateResponse = {
 
 export const userProfileLoader: LoaderFunction = async ({ params }) => {
   const username = params.username
-  return await apiRequest<ProfileUpdate>(`/user/${username}/details`)
+  return await apiRequest<ProfileUpdate>(`/user/${username}/details`,
+    true, false, {
+    method: 'GET',
+    }
+  )
 }
 
 export const userProfileAction: ActionFunction = async ({ request, params }) => {
@@ -21,10 +25,10 @@ export const userProfileAction: ActionFunction = async ({ request, params }) => 
 
   // Validate input fields
   const fields = {
-    firstName: new FormFieldValidator(formData, "firstName").maxLength(36),
-    lastName: new FormFieldValidator(formData, "lastName").maxLength(36),
-    email: new FormFieldValidator(formData, "email").isEmail().maxLength(100),
-    age: new FormFieldValidator(formData, "age").minNumber(13).maxNumber(120),
+    firstName: new FormFieldValidator(formData, 'firstName').maxLength(36),
+    lastName: new FormFieldValidator(formData, 'lastName').maxLength(36),
+    email: new FormFieldValidator(formData, 'email').isEmail().maxLength(100),
+    age: new FormFieldValidator(formData, 'age').minNumber(13).maxNumber(120),
   }
 
   const { data, errors } = validateForm(fields)
@@ -41,17 +45,17 @@ export const userProfileAction: ActionFunction = async ({ request, params }) => 
     lastName: data.lastName as string,
     email: data.email as string,
     age: data.age as number,
-    gender: formData.get("gender") as ProfileUpdate['gender'],
+    gender: formData.get('gender') as ProfileUpdate['gender'],
     address: {
-      province: formData.get("province") as string,
-      district: formData.get("district") as string,
-      streetAndNumber: formData.get("streetAndNumber") as string,
+      province: formData.get('province') as string,
+      district: formData.get('district') as string,
+      streetAndNumber: formData.get('streetAndNumber') as string,
     },
   }
 
   try {
-    const res = await apiRequest<ProfileUpdateResponse>(`/user/${username}/details`, true, {
-      method: "PUT",
+    const res = await apiRequest<ProfileUpdateResponse>(`/user/${username}/details`, true, false, {
+      method: 'PUT',
       body: JSON.stringify(updatedProfileData),
     })
   

@@ -1,46 +1,75 @@
-import { ErrorResponse } from "react-router"
+import { ErrorResponse, redirect } from 'react-router'
+import { API_BASE_URL } from '../constants'
 
 export async function apiRequest<T>(
   endpoint: string,
   isAuthRequired: boolean = true,
+  isFormData: boolean = false, // true if uploading files
   options: RequestInit = {}
 ): Promise<T> {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || ""
-  const token = localStorage.getItem("jwt") // Retrieve JWT token from localStorage
+  const baseUrl = API_BASE_URL
+  const token = localStorage.getItem('jwt')
 
   if (isAuthRequired && !token) {
-    return Promise.reject({
-      statusText: "Unauthorized",
-      status: 401,
-    } as ErrorResponse)
+    console.warn('Token not found, redirecting to login')
+    throw redirect('/auth/login')
   }
 
   const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(isAuthRequired && token ? { Authorization: `Bearer ${token}` } : {}),
+  }
+
+  // Add 'Content-Type' only if it's not FormData (browser sets it with correct boundary)
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json'
   }
 
   try {
-    const res = await fetch(`${baseUrl}${endpoint}`, {
+    const response = await fetch(`${baseUrl}${endpoint}`, {
       ...options,
       headers: { ...headers, ...options.headers },
     })
 
-    return await res.json() as T
-        
+    console.log('API request: ', {
+      url: `${baseUrl}${endpoint}`,
+      method: options.method,
+      headers: headers,
+      body: options.body,
+    })
+
+    // console.log('jwt: ', token)
+
+    const contentType = response.headers.get('content-type')
+    const isJSON = contentType?.includes('json')
+
+    const payload = isJSON ? await response.json() : await response.text()
+
+    if (isJSON && payload?.error?.includes('InvalidJwtException')) {
+      localStorage.removeItem('jwt')
+      localStorage.removeItem('username')
+      window.dispatchEvent(new Event('localStorageChange'))
+
+      console.warn('Token expired, redirecting to login')
+      throw redirect('/auth/login')
+    }
+
+    return payload as T
   } catch (err: any) {
+    console.error('API request error: ', err) 
     if (err.status && err.statusText) {
       throw err
     }
-    let statusText
-    if (err.message.includes('NetworkError')) {
+
+    let statusText = 'Lỗi không xác định'
+    if (err.message?.includes('NetworkError')) {
       statusText = 'Không thể kết nối đến máy chủ'
-    } else {
-      statusText =  err.message || 'Request failed'
+    } else if (err.statusText) {
+      statusText = err.statusText
     }
+
     throw {
       status: err.status || 500,
-      statusText: statusText
+      statusText,
     } as ErrorResponse
   }
 }

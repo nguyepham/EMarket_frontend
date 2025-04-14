@@ -4,17 +4,18 @@ import Login from '../pages/Login'
 import { loginAction, loginLoader } from './login'
 import GlobalError from '../pages/errors/GlobalError'
 import SignUp from '../pages/SignUp'
-import UserProfile from '../pages/UserProfile'
+import UserProfile from '../pages/UpdateProfile'
 import { signUpAction } from './signUp'
 import { userProfileAction, userProfileLoader } from './userProfile'
 import { changePasswordAction } from './changePassword'
 import RootLayout from '../layouts/RootLayout'
 import ChangePassword from '../pages/ChangePassword'
+import UploadProfilePicture from '../pages/UpdateProfilePicture'
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <RootLayout key={localStorage.getItem("username") || "guest"}/>,
+    element: <RootLayout />,
     errorElement: <GlobalError />,
     children: [
         { 
@@ -33,17 +34,19 @@ export const router = createBrowserRouter([
           element: <Home /> 
         },
         { 
-          path: 'user/:username/details', 
+          path: 'user/:username/update-details', 
           element: <UserProfile />, 
           loader: userProfileLoader, 
           action: userProfileAction,
-          children: [
-          ]
         },
         { 
           path: 'user/:username/change-password', 
           element: <ChangePassword />, 
           action: changePasswordAction 
+        },
+        { 
+          path: 'user/:username/update-profile-picture', 
+          element: <UploadProfilePicture />, 
         },
     ],
   }

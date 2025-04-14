@@ -5,3 +5,7 @@ export type ChangePasswordRequest = {
     updatedAt: string
   }
 }
+
+export type SuccessfulResponse = {
+  text: string
+}

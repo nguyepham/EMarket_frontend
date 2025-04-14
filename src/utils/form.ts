@@ -1,4 +1,4 @@
-import { ProfileUpdate } from "../types/model/ProfileUpdate"
+import { ProfileUpdate } from '../types/model'
 
 export type ValidationError = {
   field: string
@@ -124,9 +124,9 @@ export class FormFieldValidator<T = string> {
   }
 
   isGender(): this {
-    const allowedGenders: ProfileUpdate["gender"][] = ["FEMALE", "MALE", "OTHER", "UNKNOWN"]
+    const allowedGenders: ProfileUpdate['gender'][] = ['FEMALE', 'MALE', 'OTHER', 'UNKNOWN']
     if (!allowedGenders.includes(this.value as ProfileUpdate['gender'])) {
-      this.error = `${toDisplayFieldName(this.fieldName)} must be one of ${allowedGenders.join(", ")}`
+      this.error = `${toDisplayFieldName(this.fieldName)} must be one of ${allowedGenders.join(', ')}`
     }
     return this
   }
