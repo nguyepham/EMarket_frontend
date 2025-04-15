@@ -16,7 +16,7 @@ export function CustomAvatar({ username, avatarUrl, onClick }: {
         try {
           const res = await apiRequest<User>(`/user/${username}`, true, false)
           avatarUrl = res.imageUrl
-          console.log('Fetched avatar URL:', avatarUrl)
+          console.log('Fetched avatar URL from CustomAvatar:', avatarUrl)
         } catch (err) {
           console.error('Failed to fetch avatar:', err)
         }
@@ -25,6 +25,8 @@ export function CustomAvatar({ username, avatarUrl, onClick }: {
     }
   }, [avatarUrl])
 
+  console.log('avatarUrl from CustomAvatar: ', avatarUrl)
+  console.log('username from CustomAvatar: ', username)
   
   return (
     <Avatar

@@ -16,6 +16,11 @@ export default function RootLayout() {
   const sidebarRef = useRef<HTMLDivElement>(null)
   const [avatarUrl, setAvatarUrl] = useState(localStorage.getItem('avatarUrl'))
 
+  console.log('avatarUrl from root layout: ', avatarUrl)
+  console.log('username from root layout: ', username)
+  console.log('localStorage username: ', localStorage.getItem('username'))
+  console.log('localStorage avatarUrl: ', localStorage.getItem('avatarUrl'))
+
   // Close on ESC
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

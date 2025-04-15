@@ -14,7 +14,7 @@ import { User } from '../types/model'
 export default function Login() {
   const navigation = useNavigation()
   const isSubmitting = navigation.state === 'submitting'
-  const { setUsername } = useOutletContext<RootOutletContextType>()
+  const { setUsername, setAvatarUrl } = useOutletContext<RootOutletContextType>()
 
   const actionData = useActionData() as FormActionData
   const redirect = useNavigate()
@@ -46,16 +46,18 @@ export default function Login() {
           try {
             const res = await apiRequest<User>(`/user/${actionData.username}`, true, false)
             localStorage.setItem('avatarUrl', res.imageUrl!) // Store the new avatar URL in localStorage
-            console.log('Fetched avatar URL:', res.imageUrl)
+            console.log('Fetched avatar URL from Login:', res.imageUrl)
+
           } catch (err) {
             console.error('Failed to fetch avatar:', err)
           }
         }
-        fetchAvatar()
+        fetchAvatar().then(() => {
+          setUsername(actionData.username)
+          setAvatarUrl(localStorage.getItem('avatarUrl')!)
 
-        setUsername(actionData.username)
-
-        redirect('/home') // Redirect to home after login
+          redirect('/home') // Redirect to home after login
+        })
       }, 1000)
     }
   }, [actionData?.success]

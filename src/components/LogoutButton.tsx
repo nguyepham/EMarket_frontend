@@ -11,6 +11,7 @@ export default function LogoutButton({ closeSidebar, setUsername }: {
   const handleLogout = () => {
     localStorage.removeItem('jwt')
     localStorage.removeItem('username')
+    localStorage.removeItem('avatarUrl')
     setUsername(null)
     closeSidebar()
 
