@@ -2,7 +2,7 @@ import { LoaderFunction, ActionFunction } from 'react-router'
 import { validateForm, FormFieldValidator } from '../utils/form'
 import { apiRequest } from '../utils/api'
 import { FormActionData } from '../types/data'
-import { ProfileUpdate } from '../types/model/ProfileUpdate'
+import { ProfileUpdate } from '../types/model'
 
 type ProfileUpdateResponse = {
   status?: number
@@ -10,7 +10,7 @@ type ProfileUpdateResponse = {
   updatedProfile?: ProfileUpdate
 }
 
-export const userProfileLoader: LoaderFunction = async ({ params }) => {
+export const updateProfileLoader: LoaderFunction = async ({ params }) => {
   const username = params.username
   return await apiRequest<ProfileUpdate>(`/user/${username}/details`,
     true, false, {
@@ -19,7 +19,7 @@ export const userProfileLoader: LoaderFunction = async ({ params }) => {
   )
 }
 
-export const userProfileAction: ActionFunction = async ({ request, params }) => {
+export const updateProfileAction: ActionFunction = async ({ request, params }) => {
   const username = params.username
   const formData = await request.formData()
 
@@ -29,6 +29,9 @@ export const userProfileAction: ActionFunction = async ({ request, params }) => 
     lastName: new FormFieldValidator(formData, 'lastName').maxLength(36),
     email: new FormFieldValidator(formData, 'email').isEmail().maxLength(100),
     age: new FormFieldValidator(formData, 'age').minNumber(13).maxNumber(120),
+    province: new FormFieldValidator(formData, 'province').required(),
+    district: new FormFieldValidator(formData, 'district').required(),
+    streetAndNumber: new FormFieldValidator(formData, 'streetAndNumber').required(),
   }
 
   const { data, errors } = validateForm(fields)
@@ -47,9 +50,9 @@ export const userProfileAction: ActionFunction = async ({ request, params }) => 
     age: data.age as number,
     gender: formData.get('gender') as ProfileUpdate['gender'],
     address: {
-      province: formData.get('province') as string,
-      district: formData.get('district') as string,
-      streetAndNumber: formData.get('streetAndNumber') as string,
+      province: data.province as string,
+      district: data.district as string,
+      streetAndNumber: data.streetAndNumber as string,
     },
   }
 

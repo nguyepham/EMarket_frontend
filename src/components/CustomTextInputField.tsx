@@ -8,6 +8,7 @@ type CustomTextInputFieldProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   placeholder?: string
   type?: string
+  disabled?: boolean
   isInvalid?: boolean
   validationMessage?: string
   fontSize?: number
@@ -22,6 +23,7 @@ const CustomTextInputField: React.FC<CustomTextInputFieldProps> = ({
   onChange,
   placeholder,
   type = "text",
+  disabled,
   isInvalid = false,
   validationMessage,
   fontSize = majorScale(2),
@@ -45,6 +47,7 @@ const CustomTextInputField: React.FC<CustomTextInputFieldProps> = ({
         placeholder={placeholder}
         type={type}
         isInvalid={isInvalid}
+        disabled={disabled || false}
         fontSize={fontSize}
         height={inputHeight}
         width="100%"

@@ -4,6 +4,11 @@ import { COLOR } from '../constants'
 interface CustomButtonProps {
   text?: string
   width?: string | number
+  minWidth?: string | number
+  maxWidth?: string | number
+  padding?: string | number
+  margin?: string | number
+  justifyContent?: string
   onClick?: (e: any) => void
   isLoading?: boolean
   backgroundColor?: {
@@ -14,7 +19,7 @@ interface CustomButtonProps {
   children?: React.ReactNode
 }
 
-export default function CustomButton({ text, width, onClick, isLoading, backgroundColor, children }: CustomButtonProps) {
+export default function CustomButton({ text, width, minWidth, maxWidth, padding, margin, justifyContent, onClick, isLoading, backgroundColor, children }: CustomButtonProps) {
   const theme = mergeTheme(defaultTheme, {
     components: {
       Button: {
@@ -37,7 +42,20 @@ export default function CustomButton({ text, width, onClick, isLoading, backgrou
 
   return (
     <ThemeProvider value={theme}>
-      <Button appearance='none' size='large' width={width} onClick={onClick} isLoading={isLoading}>
+      <Button
+        appearance='none'
+        size='large'
+        width={width}
+        minWidth={minWidth}
+        maxWidth={maxWidth}
+        margin={margin}
+        padding={padding || majorScale(1)}
+        onClick={onClick}
+        isLoading={isLoading}
+        display='flex'
+        justifyContent={justifyContent || 'center'}
+        alignItems='center'
+        gap={majorScale(1)}>
         {!children && <Text
           fontSize={majorScale(2)}
           color={COLOR.TEXT_DARK}

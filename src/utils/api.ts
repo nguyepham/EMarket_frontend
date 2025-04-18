@@ -37,12 +37,14 @@ export async function apiRequest<T>(
       body: options.body,
     })
 
-    // console.log('jwt: ', token)
+    const res = await response.json()
+
+    console.log('API response: ', res)
 
     const contentType = response.headers.get('content-type')
     const isJSON = contentType?.includes('json')
 
-    const payload = isJSON ? await response.json() : await response.text()
+    const payload = isJSON ? res : await response.text()
 
     if (isJSON && payload?.error?.includes('InvalidJwtException')) {
       localStorage.removeItem('jwt')

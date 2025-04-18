@@ -13,6 +13,7 @@ type ChangePasswordRequest = {
 }
 
 type ChangePasswordResponse = {
+  oldPassword?: string
   status?: number
   statusText?: string
   text?: string
@@ -66,7 +67,7 @@ export const changePasswordAction: ActionFunction = async ({ request, params }) 
 
     console.log('res: ', res)
 
-    if (res?.status && res?.statusText) {
+    if (res.oldPassword || (res.status && res.statusText)) {
       return {
         errors: [{ field: 'server', message: 'Mật khẩu hiện tại không đúng' }],
         success: false,

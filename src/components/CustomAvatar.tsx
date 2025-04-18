@@ -1,6 +1,6 @@
-import { Avatar, majorScale, minorScale } from 'evergreen-ui'
+import { Avatar, majorScale } from 'evergreen-ui'
 import { API_BASE_URL } from '../constants'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { apiRequest } from '../utils/api'
 import { User } from '../types/model'
 
@@ -30,7 +30,7 @@ export function CustomAvatar({ username, avatarUrl, onClick }: {
   
   return (
     <Avatar
-      // key={src}
+      key={avatarUrl}
       src={avatarUrl ? `${API_BASE_URL}${avatarUrl}` : undefined}
       name={username}
       size={majorScale(6)}

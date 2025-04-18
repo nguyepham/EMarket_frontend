@@ -38,7 +38,6 @@ export async function signUpAction({ request }: ActionFunctionArgs) {
     .containsNumber()
     .containsCapitalLetter(),
     passwordConfirm: new FormFieldValidator(formData, 'passwordConfirm').required(),
-    email: new FormFieldValidator(formData, 'email').isEmail(),
     age: new FormFieldValidator(formData, 'age').required().minNumber(13).maxNumber(120),
     province: new FormFieldValidator(formData, 'province').required(),
     district: new FormFieldValidator(formData, 'district').required(),
@@ -64,7 +63,6 @@ export async function signUpAction({ request }: ActionFunctionArgs) {
       text: await bcrypt.hash(data.password as string, 12),
       updatedAt: new Date().toISOString(),
     },
-    email: data.email as string | undefined, // optional
     age: data.age as number,
     gender: formData.get('gender') as SignUpRequest['gender'], // optional
     address: {

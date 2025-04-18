@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router'
 import { Button, majorScale } from 'evergreen-ui'
 import { COLOR } from '../constants'
+import CustomButton from './CustomButton'
 
-export default function LogoutButton({ closeSidebar, setUsername }: { 
+export default function LogoutButton({ closeSidebar, setUsername, setAvatarUrl }: {
   closeSidebar: () => void
   setUsername: (username: string | null) => void
+  setAvatarUrl: (avatarUrl: string | null) => void
 }) {
   const navigate = useNavigate()
 
@@ -13,22 +15,24 @@ export default function LogoutButton({ closeSidebar, setUsername }: {
     localStorage.removeItem('username')
     localStorage.removeItem('avatarUrl')
     setUsername(null)
+    setAvatarUrl(null)
     closeSidebar()
 
     navigate('/', { replace: true })
   }
 
   return (
-    <Button
-      appearance='minimal'
-      onClick={handleLogout}
-      padding={majorScale(1)}
-      color={COLOR.TEXT_DARK}
-      fontSize={majorScale(2)}
+    <CustomButton
+      text='Đăng xuất'
       width='100%'
-      style={{ justifyContent: 'flex-end' }}
-    >
-      <span style={{ marginRight: majorScale(2) }}>Đăng xuất</span>
-    </Button>
+      padding='0'
+      justifyContent='flex-end'
+      backgroundColor={{
+        DEFAULT: COLOR.PRIMARY,
+        DARK: COLOR.PRIMARY_DARK,
+        LIGHT: COLOR.PRIMARY_LIGHT,
+      }}
+      onClick={handleLogout}>
+    </CustomButton>
   )
 }

@@ -6,11 +6,11 @@ import GlobalError from '../pages/errors/GlobalError'
 import SignUp from '../pages/SignUp'
 import UserProfile from '../pages/UpdateProfile'
 import { signUpAction } from './signUp'
-import { userProfileAction, userProfileLoader } from './userProfile'
+import { updateProfileAction, updateProfileLoader } from './updateProfile'
 import { changePasswordAction } from './changePassword'
 import RootLayout from '../layouts/RootLayout'
 import ChangePassword from '../pages/ChangePassword'
-import UploadProfilePicture from '../pages/UpdateProfilePicture'
+import UpdateAvatar from '../pages/UpdateAvatar'
 
 export const router = createBrowserRouter([
   {
@@ -36,8 +36,8 @@ export const router = createBrowserRouter([
         { 
           path: 'user/:username/update-details', 
           element: <UserProfile />, 
-          loader: userProfileLoader, 
-          action: userProfileAction,
+          loader: updateProfileLoader, 
+          action: updateProfileAction,
         },
         { 
           path: 'user/:username/change-password', 
@@ -45,8 +45,8 @@ export const router = createBrowserRouter([
           action: changePasswordAction 
         },
         { 
-          path: 'user/:username/update-profile-picture', 
-          element: <UploadProfilePicture />, 
+          path: 'user/:username/update-avatar',
+          element: <UpdateAvatar />, 
         },
     ],
   }

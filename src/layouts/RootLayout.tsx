@@ -1,14 +1,13 @@
-import { Avatar, Heading, majorScale, minorScale, Pane, SearchInput, Text } from 'evergreen-ui'
-import { Outlet } from 'react-router'
-import { use, useEffect, useRef, useState } from 'react'
+import { Heading, majorScale, minorScale, Pane, SearchInput, Text } from 'evergreen-ui'
+import { Link, Outlet } from 'react-router'
+import { useEffect, useRef, useState } from 'react'
 import AuthPanel from '../components/AuthPanel'
 import HomePanel from '../components/HomePanel'
-import { API_BASE_URL, COLOR } from '../constants'
+import { COLOR } from '../constants'
 import Sidebar from '../components/Sidebar'
 import AccountMenu from '../components/AccountMenu'
 import { CustomAvatar } from '../components/CustomAvatar'
-import { apiRequest } from '../utils/api'
-import { User } from '../types/model'
+import LogoutButton from '../components/LogoutButton'
 
 export default function RootLayout() {
   const [username, setUsername] = useState(localStorage.getItem('username'))
@@ -85,7 +84,40 @@ export default function RootLayout() {
       {/* Account sidebar */}
       {username &&
         <Sidebar isOpen={isSidebarOpen} sidebarRef={sidebarRef} username={username!}>
-          <>
+          <Pane
+            display='flex'
+            flexDirection='column'
+            padding={0}
+            height='100%'
+            justifyContent='space-between'>
+            <Pane
+              display='flex'
+              flexDirection='column'
+              gap={majorScale(2)}>
+              <Pane
+                background={COLOR.PRIMARY}
+                paddingX={majorScale(1)}
+                paddingY={majorScale(1)}
+                height='6vh'
+                display='flex'
+                flexDirection='row-reverse'
+                gap={majorScale(1)}
+                alignItems='center'>
+                <CustomAvatar username={username!} avatarUrl={avatarUrl} onClick={handleSidebarToggle} />
+                <Text
+                  fontSize={majorScale(2)}
+                  color={COLOR.TEXT_DARK}
+                  fontWeight={500}
+                  padding={majorScale(1)}
+                  display='flex'
+                  alignItems='center'
+                  gap={minorScale(1)}
+                >
+                  {username}
+                </Text>
+              </Pane>
+              <AccountMenu username={username!} setUsername={setUsername} closeSidebar={handleSidebarToggle} />
+            </Pane>
             <Pane
               background={COLOR.PRIMARY}
               padding={majorScale(1)}
@@ -94,21 +126,9 @@ export default function RootLayout() {
               flexDirection='row-reverse'
               gap={majorScale(1)}
               alignItems='center'>
-              <CustomAvatar username={username!} avatarUrl={avatarUrl} onClick={handleSidebarToggle} />
-              <Text
-                fontSize={majorScale(2)}
-                color={COLOR.TEXT_DARK}
-                fontWeight={500}
-                padding={majorScale(1)}
-                display='flex'
-                alignItems='center'
-                gap={minorScale(1)}
-              >
-                {username}
-              </Text>
+              <LogoutButton closeSidebar={handleSidebarToggle} setUsername={setUsername} setAvatarUrl={setAvatarUrl} />
             </Pane>
-            <AccountMenu username={username!} setUsername={setUsername} closeSidebar={handleSidebarToggle} />
-          </>
+          </Pane>
         </Sidebar>
       }
       <Pane display='flex' flexDirection='column' gap={majorScale(2)} minHeight='100vh' borderTopLeftRadius={minorScale(1)} borderTopRightRadius={minorScale(1)}>
@@ -121,7 +141,16 @@ export default function RootLayout() {
 
         {/* Header */}
         <Pane display='flex' justifyContent='space-between' alignItems='space-between' height='5vh' padding={majorScale(1)}>
-          <Heading size={800}>EMarket</Heading>
+          {username ? (
+            <Link to='/home' style={{ textDecoration: 'none' }}>
+              <Heading size={800}>EMarket</Heading>
+            </Link>
+          ) : (
+            <Link to='/' style={{ textDecoration: 'none' }}>
+              <Heading size={800}>EMarket</Heading>
+            </Link>
+          )}
+
           <SearchInput placeholder='Filter traits...' />
         </Pane>
 

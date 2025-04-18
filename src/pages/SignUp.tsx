@@ -8,6 +8,7 @@ import { FormActionData } from '../types/data'
 import { COLOR } from '../constants'
 import CustomTextInputField from '../components/CustomTextInputField'
 
+
 export default function SignUp() {
   const navigation = useNavigation()
   const isSubmitting = navigation.state === 'submitting'
@@ -18,7 +19,6 @@ export default function SignUp() {
     username: '',
     password: '',
     passwordConfirm: '',
-    email: '',
     age: '',
     gender: '',
     province: '',
@@ -41,7 +41,6 @@ export default function SignUp() {
           username: '',
           password: '',
           passwordConfirm: '',
-          email: '',
           age: '',
           gender: '',
           province: '',
@@ -69,7 +68,6 @@ export default function SignUp() {
           <CustomTextInputField label='Tên đăng nhập:' name='username' value={formValues.username} onChange={handleChange} placeholder='Tên đăng nhập' isInvalid={!!getError('username')} validationMessage={getError('username')} />
           <CustomTextInputField label='Mật khẩu:' name='password' type='password' value={formValues.password} onChange={handleChange} placeholder='Mật khẩu' isInvalid={!!getError('password')} validationMessage={getError('password')} />
           <CustomTextInputField label='Xác nhận mật khẩu:' name='passwordConfirm' type='password' value={formValues.passwordConfirm} onChange={handleChange} placeholder='Mật khẩu' isInvalid={!!getError('passwordConfirm')} validationMessage={getError('passwordConfirm')} />
-          <CustomTextInputField label='Email:' name='email' type='email' value={formValues.email} onChange={handleChange} placeholder='Email' isInvalid={!!getError('email')} validationMessage={getError('email')} />
           <CustomTextInputField label='Tuổi:' name='age' value={formValues.age} onChange={handleChange} placeholder='Tuổi' isInvalid={!!getError('age')} validationMessage={getError('age')} />
           <SelectField size='large' label='Giới tính:' name='gender' value={formValues.gender} onChange={handleChange} isInvalid={!!getError('gender')} validationMessage={getError('gender')}
             marginBottom={minorScale(9)}>
@@ -83,20 +81,6 @@ export default function SignUp() {
           <CustomTextInputField label='Số nhà và tên đường:' name='streetAndNumber' value={formValues.streetAndNumber} onChange={handleChange} placeholder='Số nhà và tên đường' isInvalid={!!getError('streetAndNumber')} validationMessage={getError('streetAndNumber')} />
 
           <Pane display='flex' justifyContent='center' alignItems='center' marginTop={majorScale(8)} gap={majorScale(4)}>
-            {/* <CustomButton
-              text='Huỷ'
-              width='40%'
-              backgroundColor={{
-                DEFAULT: COLOR.SECONDARY,
-                DARK: COLOR.SECONDARY_DARK,
-                LIGHT: COLOR.SECONDARY_LIGHT,
-              }}
-              onClick={(e) => {
-                e.preventDefault()
-                navigate('/')
-              }}
-              isLoading={isSubmitting}
-            /> */}
             <CustomButton
               text='Đăng ký'
               width='100%'

@@ -10,6 +10,7 @@ import { COLOR } from '../constants'
 import { RootOutletContextType } from '../types/outletContext'
 import { apiRequest } from '../utils/api'
 import { User } from '../types/model'
+import bcrypt from 'bcryptjs'
 
 export default function Login() {
   const navigation = useNavigation()
@@ -44,7 +45,11 @@ export default function Login() {
 
         const fetchAvatar = async () => {
           try {
-            const res = await apiRequest<User>(`/user/${actionData.username}`, true, false)
+            const res = await apiRequest<User>(`/user/${actionData.username}`, true, false,
+              {
+                method: 'GET'
+              }
+            )
             localStorage.setItem('avatarUrl', res.imageUrl!) // Store the new avatar URL in localStorage
             console.log('Fetched avatar URL from Login:', res.imageUrl)
 

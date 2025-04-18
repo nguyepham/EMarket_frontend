@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Form, useActionData, useNavigate, useNavigation } from 'react-router'
+import { Form, useActionData, useNavigate, useNavigation, useOutletContext } from 'react-router'
 import { Pane, Text, Alert, majorScale, minorScale } from 'evergreen-ui'
 import FormContainerHeader from '../components/FormContainerHeader'
 import { FormActionData } from '../types/data'
@@ -7,10 +7,12 @@ import FormContainerBody from '../components/FormContainerBody'
 import CustomButton from '../components/CustomButton'
 import CustomTextInputField from '../components/CustomTextInputField'
 import { COLOR } from '../constants'
+import { RootOutletContextType } from '../types/outletContext'
 
 export default function ChangePassword() {
   const navigation = useNavigation()
   const isSubmitting = navigation.state === 'submitting'
+  const {setUsername, setAvatarUrl } = useOutletContext<RootOutletContextType>()
 
   const actionData = useActionData() as FormActionData
   const redirect = useNavigate()
@@ -36,10 +38,11 @@ export default function ChangePassword() {
           newPassword: '',
           confirmPassword: '',
         })
-        // Store token in localStorage (or sessionStorage if preferred)
         localStorage.removeItem('jwt')
         localStorage.removeItem('username')
-        window.dispatchEvent(new Event('localStorageChange'))
+        localStorage.removeItem('avatarUrl')
+        setUsername(null)
+        setAvatarUrl(null)
 
         redirect('/auth/login') // Redirect to login after change password
       }, 2000)
@@ -86,22 +89,21 @@ export default function ChangePassword() {
             isInvalid={!!getError('confirmPassword')}
             validationMessage={getError('confirmPassword')}
           />
-          <Pane display='flex' justifyContent='center' alignItems='center' marginTop={majorScale(8)} gap={majorScale(4)}>
-            <CustomButton 
-            text={'Hủy'} 
-            width={'40%'} 
-            backgroundColor={{ DEFAULT: COLOR.SECONDARY, DARK: COLOR.SECONDARY_DARK, LIGHT: COLOR.SECONDARY_LIGHT }} 
-            isLoading={isSubmitting} 
-            onClick={(e) => {
-              e.preventDefault() // prevent form submission
-              setFormValues({
-                oldPassword: '',
-                newPassword: '',
-                confirmPassword: '',
-              })
-              redirect('/home')
-            }} />
+          <Pane display='flex' flexDirection='row-reverse' justifyContent='center' alignItems='center' marginTop={majorScale(8)} gap={majorScale(4)}>
             <CustomButton text={'Xác nhận'} width={'40%'} isLoading={isSubmitting} />
+            <CustomButton
+              text={'Hủy'}
+              width={'40%'}
+              backgroundColor={{ DEFAULT: COLOR.SECONDARY, DARK: COLOR.SECONDARY_DARK, LIGHT: COLOR.SECONDARY_LIGHT }}
+              onClick={(e) => {
+                e.preventDefault() // prevent form submission
+                setFormValues({
+                  oldPassword: '',
+                  newPassword: '',
+                  confirmPassword: '',
+                })
+                redirect('/home')
+              }} />
           </Pane>
         </Form>
       </FormContainerBody>
